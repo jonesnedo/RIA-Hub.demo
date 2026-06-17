@@ -1,0 +1,27 @@
+.DS_Store
+Thumbs.db
+*.log
+.env
+.env.*
+node_modules/
+dist/
+build/
+coverage/
+.vscode/
+.idea/
+
+# Never publish real client/compliance data
+*.pdf
+*.xlsx
+*.xls
+*.csv
+*.tsv
+*.json
+*.bak
+backups/
+exports/
+client-data/
+statements/
+evidence/
+
+!sample-data/demo-data.json
