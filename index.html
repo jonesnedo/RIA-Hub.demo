@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RIA Hub Compliance Statement System Demo</title>
+  <style>
+    *{box-sizing:border-box}
+    :root{
+      --ink:#172033;
+      --muted:#68758d;
+      --soft:#eef2f6;
+      --panel:#ffffff;
+      --line:#d9e1ea;
+      --nav:#101827;
+      --nav2:#182338;
+      --blue:#2764d8;
+      --teal:#0f9f8e;
+      --gold:#c98516;
+      --red:#c2413f;
+      --violet:#7357c5;
+      --green:#16875d;
+      --shadow:0 12px 28px rgba(21,32,51,.10);
+      --radius:8px;
+      font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    }
+    body{margin:0;background:#f6f8fb;color:var(--ink);font-size:14px;line-height:1.45}
+    button,input,select{font:inherit}
+    button{border:0;cursor:pointer}
+    .app{display:grid;grid-template-columns:248px minmax(0,1fr);min-height:100vh}
+    .sidebar{background:var(--nav);color:#d8e1ef;display:flex;flex-direction:column}
+    .brand{padding:22px 20px;border-bottom:1px solid rgba(255,255,255,.08)}
+    .brand-mark{display:flex;align-items:center;gap:10px;font-weight:800;font-size:20px;letter-spacing:.03em}
+    .mark{width:34px;height:34px;border-radius:8px;background:linear-gradient(135deg,#2b6de8,#13a895);display:grid;place-items:center;color:#fff;font-weight:900}
+    .brand-sub{margin-top:6px;color:#8fa0bb;font-size:12px}
+    .nav{padding:16px 10px;display:grid;gap:4px}
+    .nav h3{margin:16px 10px 6px;color:#7587a3;text-transform:uppercase;font-size:11px;letter-spacing:.11em}
+    .nav button{display:flex;align-items:center;gap:10px;width:100%;padding:10px 12px;border-radius:7px;background:transparent;color:#aebbd0;text-align:left}
+    .nav button:hover,.nav button.active{background:var(--nav2);color:#fff}
+    .dot{width:9px;height:9px;border-radius:999px;background:#62708a}
+    .nav button.active .dot{background:#4da3ff}
+    .side-note{margin-top:auto;padding:16px 20px;border-top:1px solid rgba(255,255,255,.08);font-size:12px;color:#94a4bb}
+    .main{min-width:0;display:flex;flex-direction:column}
+    .topbar{height:68px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 28px;gap:18px}
+    .topbar h1{font-size:19px;margin:0}
+    .top-actions{display:flex;align-items:center;gap:10px}
+    .pill{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:999px;padding:7px 11px;background:#fff;color:var(--muted);font-size:12px;font-weight:650}
+    .pill.demo{border-color:#b7d9ff;background:#edf6ff;color:#1957aa}
+    .btn{border-radius:7px;padding:9px 12px;background:#eef2f6;color:#344055;font-weight:700;border:1px solid var(--line)}
+    .btn.primary{background:var(--blue);color:#fff;border-color:var(--blue)}
+    .btn.ghost{background:#fff}
+    .btn[disabled]{opacity:.55;cursor:not-allowed}
+    .content{padding:24px 28px 34px;overflow:auto}
+    .notice{display:flex;gap:12px;align-items:flex-start;padding:13px 15px;border:1px solid #c7ddf5;background:#eef7ff;color:#27537f;border-radius:var(--radius);margin-bottom:18px}
+    .notice strong{display:block;margin-bottom:2px;color:#173f66}
+    .grid{display:grid;gap:16px}
+    .stats{grid-template-columns:repeat(5,minmax(120px,1fr));margin-bottom:18px}
+    .stat,.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+    .stat{padding:15px 16px}
+    .stat span{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.08em;font-weight:800}
+    .stat strong{display:block;font-size:30px;line-height:1.1;margin-top:6px}
+    .stat small{display:block;color:var(--muted);margin-top:4px}
+    .cyan strong{color:var(--teal)}.red strong{color:var(--red)}.gold strong{color:var(--gold)}.blue strong{color:var(--blue)}.violet strong{color:var(--violet)}
+    .split{grid-template-columns:minmax(0,1.25fr) minmax(320px,.75fr)}
+    .card{padding:18px}
+    .card-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+    .card h2{font-size:15px;margin:0}
+    .subtle{color:var(--muted);font-size:12px}
+    .table{width:100%;border-collapse:collapse}
+    .table th{text-align:left;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid var(--line);padding:9px}
+    .table td{border-bottom:1px solid #edf1f5;padding:10px 9px;vertical-align:middle}
+    .table tr:last-child td{border-bottom:0}
+    .badge{display:inline-flex;align-items:center;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:800;border:1px solid}
+    .ok{background:#ecf9f3;color:var(--green);border-color:#b9e7d2}
+    .warn{background:#fff6e7;color:var(--gold);border-color:#f0d49a}
+    .bad{background:#fff0ef;color:var(--red);border-color:#efc1bf}
+    .info{background:#eef5ff;color:var(--blue);border-color:#c8dafb}
+    .locked{background:#f1effb;color:var(--violet);border-color:#d7d0f1}
+    .person{display:flex;align-items:center;gap:10px}
+    .avatar{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:11px;font-weight:900;background:var(--blue)}
+    .avatar.teal{background:var(--teal)}.avatar.gold{background:var(--gold)}.avatar.violet{background:var(--violet)}
+    .alert-list{display:grid;gap:10px}
+    .alert{border:1px solid var(--line);border-radius:7px;padding:12px;background:#fbfcfe}
+    .alert-title{display:flex;align-items:center;justify-content:space-between;gap:12px;font-weight:800}
+    .alert p{margin:6px 0 0;color:var(--muted);font-size:13px}
+    .bars{display:grid;gap:12px;margin-top:6px}
+    .bar-row{display:grid;grid-template-columns:132px minmax(0,1fr) 42px;align-items:center;gap:10px}
+    .bar-label{font-weight:750}
+    .bar-track{height:9px;background:#edf1f5;border-radius:999px;overflow:hidden}
+    .bar-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--teal));border-radius:999px}
+    .feature-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .feature{padding:14px;border:1px solid var(--line);border-radius:7px;background:#fbfcfe}
+    .feature h3{margin:0 0 6px;font-size:14px}
+    .feature p{margin:0;color:var(--muted);font-size:13px}
+    .page{display:none}
+    .page.active{display:block}
+    .toast{position:fixed;right:22px;bottom:22px;max-width:390px;background:#172033;color:#fff;border-radius:8px;padding:13px 15px;box-shadow:0 18px 36px rgba(0,0,0,.22);font-size:13px}
+    .screen{min-height:220px;display:grid;place-items:center;text-align:center;padding:24px}
+    .screen strong{display:block;font-size:20px;margin-bottom:6px}
+    .screen p{max-width:560px;margin:0 auto 16px;color:var(--muted)}
+    @media (max-width:980px){
+      .app{grid-template-columns:1fr}
+      .sidebar{position:relative}
+      .nav{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .nav h3{grid-column:1/-1}
+      .stats,.split,.feature-grid{grid-template-columns:1fr}
+      .topbar{height:auto;align-items:flex-start;flex-direction:column;padding:16px}
+      .content{padding:16px}
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark"><span class="mark">RH</span><span>RIA Hub</span></div>
+        <div class="brand-sub">Compliance Statement System Demo</div>
+      </div>
+      <nav class="nav" aria-label="Demo sections">
+        <h3>Preview</h3>
+        <button class="active" data-page="dashboard"><span class="dot"></span>Dashboard</button>
+        <button data-page="people"><span class="dot"></span>Access Persons</button>
+        <button data-page="statements"><span class="dot"></span>Statements</button>
+        <button data-page="alerts"><span class="dot"></span>Alerts</button>
+        <h3>Licensed</h3>
+        <button data-page="licensed"><span class="dot"></span>Upload & Parsing</button>
+        <button data-page="licensed"><span class="dot"></span>Exports & Backup</button>
+      </nav>
+      <div class="side-note">
+        Public demo only. Sample data is fictional. Production data workflows are disabled.
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <h1 id="page-title">Dashboard</h1>
+          <div class="subtle">Current demo period: May 2026</div>
+        </div>
+        <div class="top-actions">
+          <span class="pill demo">Demo mode</span>
+          <button class="btn ghost" data-locked>Export</button>
+          <button class="btn primary" data-locked>Request Pilot</button>
+        </div>
+      </header>
+
+      <section class="content">
+        <div class="notice">
+          <div class="badge info">Notice</div>
+          <div><strong>Public demo with fictional records.</strong> Uploads, parsing, persistent client storage, production exports, and backup workflows are disabled in this version.</div>
+        </div>
+
+        <section class="page active" id="dashboard">
+          <div class="grid stats">
+            <div class="stat cyan"><span>Statements Filed</span><strong>18</strong><small>May review period</small></div>
+            <div class="stat red"><span>Missing</span><strong>3</strong><small>Follow-up required</small></div>
+            <div class="stat gold"><span>Flagged Trades</span><strong>5</strong><small>Sample list hits</small></div>
+            <div class="stat blue"><span>Open Alerts</span><strong>4</strong><small>Awaiting review</small></div>
+            <div class="stat violet"><span>Access Persons</span><strong>12</strong><small>Demo roster</small></div>
+          </div>
+
+          <div class="grid split">
+            <div class="card">
+              <div class="card-head">
+                <h2>Statement Coverage</h2>
+                <span class="badge info">Sample data</span>
+              </div>
+              <div class="bars">
+                <div class="bar-row"><span class="bar-label">Advisory</span><div class="bar-track"><div class="bar-fill" style="width:92%"></div></div><span>92%</span></div>
+                <div class="bar-row"><span class="bar-label">Operations</span><div class="bar-track"><div class="bar-fill" style="width:84%"></div></div><span>84%</span></div>
+                <div class="bar-row"><span class="bar-label">Portfolio</span><div class="bar-track"><div class="bar-fill" style="width:76%"></div></div><span>76%</span></div>
+                <div class="bar-row"><span class="bar-label">Executives</span><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span>100%</span></div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-head">
+                <h2>Open Compliance Alerts</h2>
+                <button class="btn" data-page-button="alerts">Review</button>
+              </div>
+              <div class="alert-list">
+                <div class="alert"><div class="alert-title">Restricted-list trade <span class="badge bad">High</span></div><p>Sample employee trade matched a fictional restricted security.</p></div>
+                <div class="alert"><div class="alert-title">Missing statement <span class="badge bad">Open</span></div><p>One May statement is marked overdue in the demo workflow.</p></div>
+                <div class="alert"><div class="alert-title">PDF manual review <span class="badge warn">Review</span></div><p>Parser workflow is represented but disabled in this public build.</p></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="page" id="people">
+          <div class="card">
+            <div class="card-head">
+              <h2>Access Persons</h2>
+              <button class="btn primary" data-locked>Add Person</button>
+            </div>
+            <table class="table">
+              <thead><tr><th>Name</th><th>Role</th><th>Status</th><th>Accounts</th><th>Statement Status</th></tr></thead>
+              <tbody>
+                <tr><td><div class="person"><span class="avatar">JS</span>Jordan Smith</div></td><td>Portfolio Manager</td><td><span class="badge ok">Active</span></td><td>3</td><td><span class="badge ok">Complete</span></td></tr>
+                <tr><td><div class="person"><span class="avatar teal">AL</span>Avery Lee</div></td><td>Analyst</td><td><span class="badge ok">Active</span></td><td>2</td><td><span class="badge warn">One missing</span></td></tr>
+                <tr><td><div class="person"><span class="avatar gold">MK</span>Morgan King</div></td><td>Operations</td><td><span class="badge ok">Active</span></td><td>1</td><td><span class="badge bad">Overdue</span></td></tr>
+                <tr><td><div class="person"><span class="avatar violet">TR</span>Taylor Reed</div></td><td>CCO</td><td><span class="badge ok">Active</span></td><td>2</td><td><span class="badge ok">Complete</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="page" id="statements">
+          <div class="card">
+            <div class="card-head">
+              <h2>Statement Review Preview</h2>
+              <button class="btn primary" data-locked>Upload Statement</button>
+            </div>
+            <table class="table">
+              <thead><tr><th>Employee</th><th>Institution</th><th>Period</th><th>Trades</th><th>Status</th></tr></thead>
+              <tbody>
+                <tr><td>Jordan Smith</td><td>Sample Brokerage</td><td>May 2026</td><td>12</td><td><span class="badge ok">Reviewed</span></td></tr>
+                <tr><td>Avery Lee</td><td>Demo Custodian</td><td>May 2026</td><td>8</td><td><span class="badge warn">Needs review</span></td></tr>
+                <tr><td>Morgan King</td><td>Example Securities</td><td>May 2026</td><td>0</td><td><span class="badge bad">Missing</span></td></tr>
+                <tr><td>Taylor Reed</td><td>RIA Sample Trust</td><td>May 2026</td><td>4</td><td><span class="badge ok">Reviewed</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="page" id="alerts">
+          <div class="grid feature-grid">
+            <div class="feature"><h3>Restricted List Hit</h3><p>Demo alert showing how a CCO can document review notes, disposition, and escalation.</p></div>
+            <div class="feature"><h3>Missing Statement</h3><p>Demo alert showing current-period statement collection follow-up and overdue status.</p></div>
+            <div class="feature"><h3>Manual Review</h3><p>Production parsing and evidence handling are intentionally disabled in this public version.</p></div>
+          </div>
+          <div class="card" style="margin-top:16px">
+            <div class="card-head">
+              <h2>Alert Review Workflow</h2>
+              <button class="btn primary" data-locked>Log Resolution</button>
+            </div>
+            <table class="table">
+              <thead><tr><th>Alert</th><th>Severity</th><th>Owner</th><th>Demo Status</th></tr></thead>
+              <tbody>
+                <tr><td>Trade matched fictional restricted list</td><td><span class="badge bad">High</span></td><td>Compliance</td><td><span class="badge warn">Open</span></td></tr>
+                <tr><td>Statement overdue for sample account</td><td><span class="badge bad">High</span></td><td>Compliance</td><td><span class="badge warn">Open</span></td></tr>
+                <tr><td>Managed account agreement missing</td><td><span class="badge warn">Medium</span></td><td>Operations</td><td><span class="badge info">In progress</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="page" id="licensed">
+          <div class="card screen">
+            <div>
+              <span class="badge locked">Licensed feature</span>
+              <strong>Production workflow disabled in public demo</strong>
+              <p>The licensed version includes statement upload, PDF/CSV/OFX parsing, document storage, backup/restore, production exports, and implementation support.</p>
+              <button class="btn primary" data-locked>Contact RIA Hub</button>
+            </div>
+          </div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const pages={dashboard:'Dashboard',people:'Access Persons',statements:'Statements',alerts:'Compliance Alerts',licensed:'Licensed Features'};
+    const showPage=id=>{
+      document.querySelectorAll('.page').forEach(page=>page.classList.toggle('active',page.id===id));
+      document.querySelectorAll('[data-page]').forEach(button=>button.classList.toggle('active',button.dataset.page===id));
+      document.getElementById('page-title').textContent=pages[id]||'Demo';
+    };
+    document.querySelectorAll('[data-page]').forEach(button=>button.addEventListener('click',()=>showPage(button.dataset.page)));
+    document.querySelectorAll('[data-page-button]').forEach(button=>button.addEventListener('click',()=>showPage(button.dataset.pageButton)));
+    document.querySelectorAll('[data-locked]').forEach(button=>{
+      button.addEventListener('click',()=>{
+        const existing=document.querySelector('.toast');
+        if(existing)existing.remove();
+        const toast=document.createElement('div');
+        toast.className='toast';
+        toast.textContent='This action is disabled in the public demo. The full workflow is available in the licensed RIA Hub product.';
+        document.body.appendChild(toast);
+        setTimeout(()=>toast.remove(),3600);
+      });
+    });
+  </script>
+</body>
+</html>
